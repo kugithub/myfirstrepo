@@ -16,12 +16,12 @@
         <a3client.version>1.2.1</a3client.version>
         <artifact.id>wwrc-customer</artifact.id>
         <mockito.ver>1.10.19</mockito.ver>
-	<sonar.language>java</sonar.language>
-	<dependency.check.report.dir>/tmp/dependency-check</dependency.check.report.dir>
-	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <sonar.host.url>https://rn-post-lapp1712.rno.apple.com:4005/</sonar.host.url>
+	    <dependency.check.report.dir>/tmp/dependency-check</dependency.check.report.dir>
+	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <sonar.host.url>http://localhost:9000/</sonar.host.url>
         <sonar.sources>src/main/java</sonar.sources>
         <sonar.tests>src/test</sonar.tests>
+        <sonar.language>java</sonar.language>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.jacoco.reportPaths>/tmp/jacoco.exec</sonar.jacoco.reportPaths>
         <sonar.dependencyCheck.reportPath>${dependency.check.report.dir}/dependency-check-report.xml</sonar.dependencyCheck.reportPath>
