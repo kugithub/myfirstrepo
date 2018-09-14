@@ -1,0 +1,62 @@
+schemaVersion: 2.0
+timeout: 90
+machine:
+  java:
+    version: 1.8
+
+builds:
+  - branchRules:
+     whitelist: [r\d+\-\d+(-\w+)*]
+    machine:
+      docker:
+        baseImage: docker.apple.com/wwrc-docker-releases/pos-buildozer:j3.6
+    trigger:
+      gitPush: true
+    secrets:
+      names:
+         - ACCESSTOKEN
+    build:
+      template: freestyle:v2:build
+      steps:
+        - cd /code && ./sonar_build.sh ${PROJECT} ${CODE_VERSION} --password-file "$BUILD_SECRETS_PATH/ACCESSTOKEN"
+
+  - branchRules:
+     whitelist: [r\d+\-\d+(-\w+)*]
+    machine:
+      docker:
+        baseImage: docker.apple.com/wwrc-docker-releases/pos-buildozer:j3.6
+    trigger:
+      gitPush: false
+    secrets:
+      names:
+         - ACCESSTOKEN
+    build:
+      template: freestyle:v2:release
+      steps:
+         - cd /code && ./sonar_build.sh ${PROJECT} ${CODE_VERSION} --password-file "$BUILD_SECRETS_PATH/ACCESSTOKEN"
+    publish:
+     release: true
+     libraries:
+       includePattern: .dist/**/*.pom,.dist/**/*.jar
+       repo:
+         m2:wwrc
+    finally:
+      pipelineChain:
+        - pipeline: dockerfile-BRANCH_NM-publish
+
+  - branchRules:
+      whitelist: [r\d+\-\d+(-\w+)*]
+    group: dockerfile
+    build:
+       template: dockerfile:v1:publish
+       buildFilePath: .
+    trigger:
+      gitPush: false
+    secrets:
+      names:
+         - ACCESSTOKEN
+    publish:
+      docker:
+        namespace: wwrc-docker-releases
+        registry: docker.apple.com
+        tag: ${code_version}
