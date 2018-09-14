@@ -1,5 +1,0 @@
-wwrc.pos.secure=true
-com.apple.ist.retail.pos.security.keyStoreFile=src/test/resources/test-keystore.jks
-com.apple.ist.retail.pos.security.keyStorePassword=ZzrIpNEEFXx0XvvZgGyHPV9oT4zZTC8iSRNsmZ1XdxQ=
-com.apple.ist.retail.pos.security.trustStoreFile=src/test/resources/test-truststore.jks
-com.apple.ist.retail.pos.security.trustStorePassword=ZzrIpNEEFXx0XvvZgGyHPV9oT4zZTC8iSRNsmZ1XdxQ=

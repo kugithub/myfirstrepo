@@ -1,0 +1,6 @@
+projectKey=devops8
+serverUrl=http://localhost:9000
+serverVersion=6.7.5.38563
+dashboardUrl=http://localhost:9000/dashboard/index/devops8
+ceTaskId=AWXXaox6fmtNIwBWITC7
+ceTaskUrl=http://localhost:9000/api/ce/task?id=AWXXaox6fmtNIwBWITC7
