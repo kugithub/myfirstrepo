@@ -8,8 +8,9 @@ import com.apple.wwrc.foundation.framework.exception.FrameworkException;
 import com.apple.wwrc.service.customer.model.response.EmployeeSearch;
 
 /**
- *  This is your service common class. Make sure it's documented here.
+ *  This is your service common class. Make sure it's documented here. Added one more comment
  */
+
 @POSService(version="v1.0", name="CustomerService")
 public interface CustomerServiceInterface {
 
