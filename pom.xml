@@ -18,7 +18,8 @@
         <mockito.ver>1.10.19</mockito.ver>
 	    <dependency.check.report.dir>/tmp/dependency-check</dependency.check.report.dir>
 	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <sonar.host.url>http://localhost:9000/</sonar.host.url>
+        <sonar.host.url>https://pos-sonar.corp.apple.com:443</sonar.host.url>
+        <sonar.login>46256fb0e17dbe7a345d4294b30d8f83eb161f7d</sonar.login>
         <sonar.sources>src/main/java</sonar.sources>
         <sonar.tests>src/test</sonar.tests>
         <sonar.language>java</sonar.language>
