@@ -31,7 +31,7 @@ import org.slf4j.Logger;
  * Off-load DB works to its fixed number of identical containers where
  * its configuration client in (possibly thousands of) micro-service containers
  * pull configurations from using rcm/event-central.
- * Add more comments in this lines sonarpull test
+ * Add more comments in this lines sonarpull test. comment more
  */
 @SuppressWarnings({"squid:S00103","common-java:InsufficientCommentDensity","squid:S1166","squid:S109"})
 public class ConfigurationService extends ServiceFactory implements ConfigurationServiceIF
