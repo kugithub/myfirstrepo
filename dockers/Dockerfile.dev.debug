@@ -1,0 +1,28 @@
+FROM docker.apple.com/wwrc-docker-releases/jamaica-alpine-jre8:jaj1.5
+ENV LANG C.UTF-8
+
+WORKDIR /
+COPY build/wwrc-configuration-server-service-@VERSION@-jar-with-dependencies.jar wwrc-configuration-server-service-@VERSION@-jar-with-dependencies.jar
+RUN touch ssl.properties && echo "wwrc.pos.secure=false" > ssl.properties
+ 
+#### Startup script
+RUN touch startup_safemode.sh && echo "#!/bin/sh" >> startup_safemode.sh && \
+    echo "while true; do sleep 10; done" >> startup_safemode.sh
+
+RUN touch startup.sh && echo "#!/bin/sh" >> startup.sh && \ 
+    echo "java -classpath pos-encrypt-util-1.1.4.jar:wwrc-configuration-server-service-@VERSION@-jar-with-dependencies.jar \\" >> startup.sh && \
+    echo "-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5555 \\" >> startup.sh && \
+    echo "-Dwwrc.pos.ssl.config=ssl.properties -DbootStrapIp=\"\$RCMURL\" \\" >> startup.sh && \
+    echo "-Dcom.apple.wwrc.db.jdbcUrl=\"\$DBURL\" \\" >> startup.sh && \
+    echo "-Dcom.apple.wwrc.db.user=\"\$DBUSER\" \\" >> startup.sh && \
+    echo "-Dcom.apple.wwrc.db.password=\"\$DBENCRYPTPWD\" \\" >> startup.sh && \
+    echo "-Dcom.apple.wwrc.db.type=\"\$DBTYP\" \\" >> startup.sh && \
+    echo "-Did_groups=configurationServer \\" >> startup.sh && \
+    echo "-DmonitoringDisabled=true \\" >> startup.sh && \
+	echo "-DauthorizationDisabled=true \\" >> startup.sh && \
+    echo "com.apple.wwrc.foundation.framework.main.ServiceMain" >> startup.sh && \
+    chmod 775 *.sh
+
+CMD ./startup.sh
+### Note: In case of Fire, use startup_safemode.sh
+### CMD ./startup_safemode.sh
