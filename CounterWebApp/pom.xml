@@ -18,7 +18,7 @@
 		<sonar.language>java</sonar.language>
 		<sonar.host.url>http://localhost:9000/</sonar.host.url>
         <sonar.sources>src/main/java</sonar.sources>
-        <sonar.tests>src/test</sonar.tests>
+       <!-- <sonar.tests>src/test</sonar.tests>-->
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.jacoco.reportPaths>/tmp/jacoco.exec</sonar.jacoco.reportPaths>
         <sonar.dependencyCheck.reportPath>${dependency.check.report.dir}/dependency-check-report.xml</sonar.dependencyCheck.reportPath>
