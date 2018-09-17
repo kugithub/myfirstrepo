@@ -1,124 +1,116 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.apple.wwrc.foundation</groupId>
-    <artifactId>wwrc-authorization</artifactId>
-    <version>19.1.5</version>
-    <packaging>pom</packaging>
-    <name>wwrc-authorization-parent</name>
-    <properties>
-        <junit.jupiter.version>5.0.1</junit.jupiter.version>
-        <powermock.version>1.7.1</powermock.version>
-        <pos-foundation.ver>1.2.0</pos-foundation.ver>
-        <pos-encryption.ver>1.1.4</pos-encryption.ver>
-	<sonar.language>java</sonar.language>
-	<dependency.check.report.dir>/tmp/dependency-check</dependency.check.report.dir>
-	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <sonar.host.url>http://localhost:9000</sonar.host.url>
-        <sonar.sources>src/main/java</sonar.sources>
-        <sonar.tests>src/test</sonar.tests>
-        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-        <sonar.jacoco.reportPaths>/tmp/jacoco.exec</sonar.jacoco.reportPaths>
-        <sonar.dependencyCheck.reportPath>${dependency.check.report.dir}/dependency-check-report.xml</sonar.dependencyCheck.reportPath>
-    </properties>
-    <dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.apple.wwrc.foundation</groupId>
-				<artifactId>pos-foundation-core</artifactId>
-				<version>${pos-foundation.ver}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.apple.wwrc</groupId>
-				<artifactId>pos-encrypt-util</artifactId>
-				<version>${pos-encryption.ver}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.codehaus.sonar</groupId>
-				<artifactId>sonar-maven3-plugin</artifactId>
-				<version>5.1</version>
-				<type>pom</type>
-			</dependency>
-		</dependencies>
-    </dependencyManagement>
+    <parent>
+    <artifactId>wwrc-customer</artifactId>
+    <groupId>com.apple.wwrc.service.customer</groupId>
+    <version>19.1.1</version>
+  </parent>
+    <groupId>com.apple.wwrc.service.customer</groupId>
+    <artifactId>${project.parent.artifactId}-testclient</artifactId>
+    <packaging>jar</packaging>
+    <name>${project.parent.artifactId}-testclient</name>
+    <url>http://maven.apache.org</url>
+    <dependencies>
+        <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>${project.parent.artifactId}-client</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito2</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
     <build>
-        <defaultGoal>clean install</defaultGoal>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
-                <version>2.5.2</version>
-                <executions>
-                    <execution>
-                        <id>default-install</id>
-                    </execution>
-                </executions>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.19.1</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.junit.platform</groupId>
+                        <artifactId>junit-platform-surefire-provider</artifactId>
+                        <version>1.0.1</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.junit.jupiter</groupId>
+                        <artifactId>junit-jupiter-engine</artifactId>
+                        <version>${junit.jupiter.version}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.8.2</version>
-                <executions>
-                    <execution>
-                        <id>default-deploy</id>
-                    </execution>
-                </executions>
-
+                <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
-                    <deployAtEnd>true</deployAtEnd>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>${project.groupId}.Service</mainClass>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                    </archive>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-eclipse-plugin</artifactId>
-                <version>2.9</version>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.4.1</version>
                 <configuration>
-                    <downloadSources>true</downloadSources>
-                    <downloadJavadocs>true</downloadJavadocs>
+                    <!-- get all project dependencies -->
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <!-- MainClass in mainfest make a executable jar -->
+                    <archive>
+                        <manifest>
+                            <mainClass>${project.groupId}.Service</mainClass>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                    </archive>
                 </configuration>
-            </plugin>
-	    <plugin>
-              <groupId>org.owasp</groupId>
-              <artifactId>dependency-check-maven</artifactId>
-              <version>3.1.2</version>
-              <executions>
-                <execution>
-                  <goals>
-                    <goal>check</goal>
-                  </goals>
-                </execution>
-              </executions>
-              <configuration>
-                <format>XML</format>
-                <outputDirectory>${dependency.check.report.dir}</outputDirectory>
-		<suppressionFiles>
-		  <suppressionFile>${maven.home}/dependency-check-suppressions.xml</suppressionFile>
-		</suppressionFiles>
-              </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.0</version>
                 <executions>
                     <execution>
-                        <id>default-prepare-agent</id>
+                        <id>make-assembly</id>
+                        <!-- bind to the packaging phase -->
+                        <phase>package</phase>
                         <goals>
-                            <goal>prepare-agent</goal>
+                            <goal>single</goal>
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
                 <configuration>
-                    <destFile>${sonar.jacoco.reportPaths}</destFile>
-                    <append>true</append>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-  <modules>
-    <module>testclient</module>
-    <module>service</module>
-  </modules>
 </project>

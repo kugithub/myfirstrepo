@@ -7,7 +7,7 @@ DEPLOYMENT="$2"
 BRANCH_NM=`git branch | grep '*' | awk '{print $2}'`
 
 mkdir -p $REPO/build/
-cp $REPO/service/target/wwrc-authorization-service-$VER-jar-with-dependencies.jar $REPO/build/
+cp $REPO/service/target/wwrc-customer-service-$VER-jar-with-dependencies.jar $REPO/build/
 
 ### Either vBump Docker.prod, Docker.dev and Docker.dev.debug
 if   [ "$DEPLOYMENT" == '--prod' ];then
@@ -35,6 +35,6 @@ if [ "$DEPLOYMENT" == '--prod' ];then
     echo
     cat $REPO/Dockerfile
 else
-	(docker build . -t author-server:$VER -f dockers/Dockerfile)
+	(docker build . -t customer-server:$VER -f dockers/Dockerfile)
 fi
 

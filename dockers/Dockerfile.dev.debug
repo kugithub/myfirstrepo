@@ -1,25 +1,26 @@
-FROM docker.apple.com/wwrc-docker-releases/jamaica-alpine-jre8:jaj1.5
+FROM docker.apple.com/wwrc/jamaica_alpine_jre8:jaj1.3
 ENV LANG C.UTF-8
 
 WORKDIR /
-COPY build/wwrc-authorization-service-@VERSION@-jar-with-dependencies.jar wwrc-authorization-service-jar-with-dependencies.jar
+COPY build/wwrc-customer-service-@VERSION@-jar-with-dependencies.jar wwrc-customer-service-@VERSION@-jar-with-dependencies.jar
+RUN touch ssl.properties && echo "wwrc.pos.secure=false" > ssl.properties
 
 #### Startup script
 RUN touch startup_safemode.sh && echo "#!/bin/sh" >> startup_safemode.sh && \
     echo "while true; do sleep 10; done" >> startup_safemode.sh
 
 RUN touch startup.sh && echo "#!/bin/sh" >> startup.sh && \
-    echo "java -classpath pos-encrypt-util-1.1.4.jar:wwrc-authorization-service-jar-with-dependencies.jar \\" >> startup.sh && \
-    echo "-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5557 \\" >> startup.sh && \
-    echo "-Dwwrc.pos.ssl.config=\"\$SSL_PROPERTIES_FILE_PATH\" -DbootStrapIp=\"\$RCMURL\" \\" >> startup.sh && \
+    echo "java -classpath pos-encrypt-util-1.1.4.jar:wwrc-customer-service-@VERSION@-jar-with-dependencies.jar \\" >> startup.sh && \
+    echo "-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5560 \\" >> startup.sh && \
+    echo "-Dwwrc.pos.ssl.config=ssl.properties -DbootStrapIp=\"\$RCMURL\" \\" >> startup.sh && \
     echo "-Dcom.apple.wwrc.db.jdbcUrl=\"\$DBURL\" \\" >> startup.sh && \
-    echo "-Dcom.apple.wwrc.db.user=\"\$DBUSER\" \\" >> startup.sh && \
+    echo "-Dcom.apple.wwrc.db.user="\$DBUSER" \\" >> startup.sh && \
     echo "-Dcom.apple.wwrc.db.password=\"\$DBENCRYPTPWD\" \\" >> startup.sh && \
     echo "-Dcom.apple.wwrc.db.type=\"\$DBTYP\" \\" >> startup.sh && \
     echo "-Did_groups=POS \\" >> startup.sh && \
-    echo "-DRPC=true \\" >> startup.sh && \
+    echo "-DauthDisabled=true \\" >> startup.sh && \
     echo "-DmonitoringDisabled=true \\" >> startup.sh && \
-	echo "-DauthorizationDisabled=true \\" >> startup.sh && \
+    echo "-DauthorizationDisabled=true \\" >> startup.sh && \
     echo "com.apple.wwrc.foundation.framework.main.ServiceMain" >> startup.sh && \
     chmod 775 *.sh
 

@@ -2,16 +2,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.apple.wwrc.foundation</groupId>
-    <artifactId>wwrc-authorization</artifactId>
-    <version>19.1.5</version>
+    <groupId>com.apple.wwrc.service.customer</groupId>
+    <artifactId>wwrc-customer</artifactId>
+    <version>19.1.1</version>
     <packaging>pom</packaging>
-    <name>wwrc-authorization-parent</name>
+    <name>wwrc-customer-parent</name>
     <properties>
         <junit.jupiter.version>5.0.1</junit.jupiter.version>
         <powermock.version>1.7.1</powermock.version>
         <pos-foundation.ver>1.2.0</pos-foundation.ver>
-        <pos-encryption.ver>1.1.4</pos-encryption.ver>
+        <dsclient.version>FY15R18_1.6</dsclient.version>
+        <i3rpc.version>FY15R10</i3rpc.version>
+        <a3client.version>1.2.1</a3client.version>
+        <artifact.id>wwrc-customer</artifact.id>
+        <mockito.ver>1.10.19</mockito.ver>
 	<sonar.language>java</sonar.language>
 	<dependency.check.report.dir>/tmp/dependency-check</dependency.check.report.dir>
 	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -23,25 +27,39 @@
         <sonar.dependencyCheck.reportPath>${dependency.check.report.dir}/dependency-check-report.xml</sonar.dependencyCheck.reportPath>
     </properties>
     <dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.apple.wwrc.foundation</groupId>
-				<artifactId>pos-foundation-core</artifactId>
-				<version>${pos-foundation.ver}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.apple.wwrc</groupId>
-				<artifactId>pos-encrypt-util</artifactId>
-				<version>${pos-encryption.ver}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.codehaus.sonar</groupId>
-				<artifactId>sonar-maven3-plugin</artifactId>
-				<version>5.1</version>
-				<type>pom</type>
-			</dependency>
-		</dependencies>
+        <dependencies>
+            <dependency>
+                <groupId>com.apple.wwrc.foundation</groupId>
+                <artifactId>pos-foundation-core</artifactId>
+                <version>${pos-foundation.ver}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.apple.ist.idms</groupId>
+                <artifactId>DSClient</artifactId>
+                <version>${dsclient.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.apple.ist.idms</groupId>
+                <artifactId>i3rpc</artifactId>
+                <version>${i3rpc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.apple.ist.idms</groupId>
+                <artifactId>a3tokenclient</artifactId>
+                <version>${a3client.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.apple.wwrc</groupId>
+                <artifactId>pos-encrypt-util</artifactId>
+                <version>${pos.encrypt.util.version}</version>
+            </dependency>
+	    <dependency>
+	      <groupId>org.codehaus.sonar</groupId>
+	      <artifactId>sonar-maven3-plugin</artifactId>
+	      <version>5.1</version>
+	      <type>pom</type>
+	    </dependency>
+        </dependencies>
     </dependencyManagement>
     <build>
         <defaultGoal>clean install</defaultGoal>
@@ -95,7 +113,7 @@
                 <outputDirectory>${dependency.check.report.dir}</outputDirectory>
 		<suppressionFiles>
 		  <suppressionFile>${maven.home}/dependency-check-suppressions.xml</suppressionFile>
-		</suppressionFiles>
+		</suppressionFiles>		
               </configuration>
             </plugin>
             <plugin>
@@ -114,10 +132,12 @@
                     <destFile>${sonar.jacoco.reportPaths}</destFile>
                     <append>true</append>
                 </configuration>
-            </plugin>
+            </plugin>	    
         </plugins>
     </build>
+
   <modules>
+    <module>client</module>
     <module>testclient</module>
     <module>service</module>
   </modules>
