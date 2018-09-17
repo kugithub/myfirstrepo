@@ -1,0 +1,52 @@
+FROM docker.apple.com/wwrc/jamaica_alpine_jre8:jaj1.3
+ENV LANG C.UTF-8
+
+WORKDIR /
+COPY build/wwrc-authorization-service-@VERSION@-jar-with-dependencies.jar wwrc-authorization-service-jar-with-dependencies.jar
+
+#### Keystore and Truststore via ssl.properties
+RUN touch ssl.properties && \
+   echo "wwrc.pos.secure=$secure_flag \\" >> ssl.properties && \
+   echo "com.apple.ist.retail.pos.security.keyStoreFile=$keystore_file_path" >> ssl.properties && \
+   echo "com.apple.ist.retail.pos.security.keyStorePassword=$keystore_pass" >> ssl.properties && \
+   echo "com.apple.ist.retail.pos.security.trustStoreFile=$truststore_file_path" >> ssl.properties && \
+   echo "com.apple.ist.retail.pos.security.trustStorePassword=$truststore_pass" >> ssl.properties  && \
+   echo "com.apple.ist.retail.pos.security.keyAlias=$key_alias" >> ssl.properties
+
+#### Startup script
+RUN touch startup_safemode.sh && echo "#!/bin/sh" >> startup_safemode.sh && \
+    echo "while true; do sleep 10; done" >> startup_safemode.sh
+
+#### Use startup script to replace ssl properties variable with environment variables
+RUN touch startup.sh && echo "#!/bin/sh" >> startup.sh && \
+    echo "### Use startup script to replace ssl properties variable with environment variables" >> startup.sh && \
+    echo "secure_flag=\`echo \$SECURE_FLAG\`" >> startup.sh && \
+    echo "keystore_file_path=\`echo \$KEYSTORE_FILE_PATH\`" >> startup.sh && \
+    echo "truststore_file_path=\`echo \$TRUSTSTORE_FILE_PATH\`" >> startup.sh && \
+    echo "keystore_pass=\`echo \$KEYSTORE_PASS\`" >> startup.sh && \
+    echo "truststore_pass=\`echo \$TRUSTSTORE_PASS\`" >> startup.sh && \
+    echo "key_alias=\`echo \$KEY_ALIAS\`" >> startup.sh && \
+    echo "sed -i \"s/@secure_flag/\$secure_flag/g\" ssl.properties" >> startup.sh && \
+    echo "sed -i \"s/@keystore_file_path/\$keystore_file_path/g\" ssl.properties" >> startup.sh && \
+    echo "sed -i \"s/@keystore_pass/\$keystore_pass/g\" ssl.properties" >> startup.sh && \
+    echo "sed -i \"s/@truststore_file_path/\$truststore_file_path/g\" ssl.properties" >> startup.sh && \
+    echo "sed -i \"s/@truststore_pass/\$truststore_pass/g\" ssl.properties" >> startup.sh && \
+    echo "sed -i \"s/@key_alias/\$key_alias/g\" ssl.properties" >> startup.sh && \
+    echo "" >> startup.sh
+
+RUN echo "java -classpath pos-encrypt-util-1.1.4.jar:wwrc-authorization-service-jar-with-dependencies.jar \\" >> startup.sh && \
+    echo "-Dwwrc.pos.ssl.config=\"\$SSL_PROPERTIES_FILE_PATH\" -DbootStrapIp=\"\$RCMURL\" \\" >> startup.sh && \
+    echo "-Dcom.apple.wwrc.db.jdbcUrl=\"\$DBURL\" \\" >> startup.sh && \
+    echo "-Dcom.apple.wwrc.db.user=\"\$DBUSER\" \\" >> startup.sh && \
+    echo "-Dcom.apple.wwrc.db.password=\"\$DBENCRYPTPWD\" \\" >> startup.sh && \
+    echo "-Dcom.apple.wwrc.db.type=\"\$DBTYP\" \\" >> startup.sh && \
+    echo "-Did_groups=POS \\" >> startup.sh && \
+    echo "-DRPC=true \\" >> startup.sh && \
+    echo "-DmonitoringDisabled=true \\" >> startup.sh && \
+    echo "-DauthorizationDisabled=true \\" >> startup.sh && \
+    echo "com.apple.wwrc.foundation.framework.main.ServiceMain" >> startup.sh && \
+    chmod 775 *.sh
+
+CMD ./startup.sh
+### Note: In case of Fire, use startup_safemode.sh
+### CMD ./startup_safemode.sh
